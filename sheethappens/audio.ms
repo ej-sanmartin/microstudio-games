@@ -4,17 +4,19 @@ play = function(name)
   if soundUnlocked then audio.playSound(name, 1, 1, 0, false) end
 end
 
-unlock_sound_mobile = function()
-  if not soundUnlocked then
-    if touch.available and (touch.pressed or touch.touching) then soundUnlocked = true end
-    // keyboard.any is not real; leave to desktop unlock
-  end
-end
+unlock_sound_if_gesture = function()
+  if soundUnlocked then return end
+  
+  if mouse.pressed or mouse.down then soundUnlocked = true end
+  if touch.press or mouse.press then soundUnlocked = true end
 
-unlock_sound_desktop = function(ax)
-  if not soundUnlocked then
-    if mouse.pressed then soundUnlocked = true end
-    if ax != 0 then soundUnlocked = true end
-    if keyboard.SPACE or keyboard.ENTER then soundUnlocked = true end
+  if keyboard.press.SPACE or keyboard.press.ENTER
+     or keyboard.press.A or keyboard.press.D
+     or keyboard.press.LEFT or keyboard.press.RIGHT then
+    soundUnlocked = true
+  end
+
+  if gamepad.connected and (gamepad.press.A or gamepad.press.START) then
+    soundUnlocked = true
   end
 end

@@ -27,25 +27,37 @@ reset = function()
 
   ambientDrift = 0
   ambientTimer = 0
+  
+  tap_frames = 0
+  tap_last_side = 0
 
   prevSheetMid = localSheetMid
 end
 
 update = function()
-  unlock_sound_mobile()
-
   if state == "play" then
+    unlock_sound_if_gesture()
+  
+    // Compute sheet mid *before* deriving touch axis
+    sheetMid = (left.x + right.x) / 2
+    sheetW   = (right.x - left.x) * SHEET_SHRINK
+    sheetDX  = sheetMid - prevSheetMid
+
+    // Base axis from keyboard / gamepad
     ax = get_axis()
-    unlock_sound_desktop(ax)
-
-    // move carriers as one
-    left.x  += ax * MOVE
-    right.x += ax * MOVE
-
-    // spacing
+  
+    moveSpeed = MOVE
+    if touch.available and (touch.touching or touch.pressed) then
+      moveSpeed = MOVE * 0.55   // tune: 0.45–0.70
+    end
+    
+    left.x  += ax * moveSpeed
+    right.x += ax * moveSpeed
+  
+    // keep right at least MIN_GAP to the right of left
     if right.x - left.x < MIN_GAP then right.x = left.x + MIN_GAP end
-
-    // clamps
+  
+    // soft clamps so they stay on screen
     halfW = screen.width * 0.45
     if left.x < -halfW then
       offset = -halfW - left.x
@@ -57,26 +69,13 @@ update = function()
       left.x -= offset
       right.x -= offset
     end
-
-    // sheet geometry
+  
+    // recompute after clamp for downstream physics
     sheetMid = (left.x + right.x) / 2
     sheetW   = (right.x - left.x) * SHEET_SHRINK
     sheetDX  = sheetMid - prevSheetMid
 
-    // finger-follow override (mobile)
-    if touch.available and touch.touching then
-      ax = (touch.x - sheetMid) / (screen.width * 0.5)
-      if ax < -1 then ax = -1 end
-      if ax >  1 then ax =  1 end
-      left.x  += ax * MOVE
-      right.x += ax * MOVE
-      // recompute after move
-      sheetMid = (left.x + right.x) / 2
-      sheetW   = (right.x - left.x) * SHEET_SHRINK
-      sheetDX  = sheetMid - prevSheetMid
-    end
-
-    // physics
+    // --- physics as you had before ---
     prevY = jumper.y
     jumper.vy += GRAVITY
     jumper.x  += jumper.vx
@@ -115,16 +114,18 @@ update = function()
       if (score % CELEB_STEP) == 0 then
         celebrateTimer = CELEB_TIME
         play("yahoo")
-        jumper.vy = sqrt(2 * abs(GRAVITY) * (TARGET_APEX * 1.5))  // extra high
+        jumper.vy = sqrt(2 * abs(GRAVITY) * (TARGET_APEX * 1.5))  // celebratory boost
       end
     end
 
-    // walls (match carriers)
+    // walls (match carrier clamp)
     wall = halfW
-    if jumper.x < -wall then jumper.x = -wall
+    if jumper.x < -wall then
+      jumper.x = -wall
       jumper.vx = -jumper.vx * 0.6
     end
-    if jumper.x >  wall then jumper.x =  wall
+    if jumper.x >  wall then
+      jumper.x =  wall
       jumper.vx = -jumper.vx * 0.6
     end
 
@@ -144,7 +145,7 @@ update = function()
     end
   end
 
-  // difficulty ramp (only shrink sheet; gravity still ramps in your version)
+  // difficulty ramp
   step = floor(score / 10)
   if step > difficultyStep then
     difficultyStep = step

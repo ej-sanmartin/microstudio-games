@@ -1,7 +1,7 @@
 // --- Config (tuning) ---
 GRAVITY           = -0.35
 BOUNCE            = 0.92    // energy kept after bounce
-MOVE              = 2.5   // carrier movement speed
+MOVE              = 2.5     // carrier movement speed
 SHEET_THICK       = 6
 MIN_GAP           = 50      // min distance between carriers
 SHEET_MARGIN      = 40
