@@ -139,7 +139,7 @@ update = function()
     end
 
   else
-    if keyboard.space or mouse.pressed or (touch.available and touch.pressed) then
+    if keyboard.SPACE or keyboard.ENTER or mouse.pressed or (touch.available and (touch.pressed or touch.touching)) then
       reset()
     end
   end
