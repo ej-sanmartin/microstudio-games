@@ -124,11 +124,11 @@ draw = function()
   local font_scale = screen.height / BASE_H
 
   // precompute sizes
-  local SIZE_TITLE      = clampf(16 * font_scale, 10, 22)
-  local SIZE_SUBTITLE   = clampf(8  * font_scale, 7, 13)
-  local SIZE_HUD        = clampf(9  * font_scale, 7, 14)
-  local SIZE_HUD_DELTA  = clampf(12 * font_scale, 9, 18)
-  local SIZE_GO_TITLE   = clampf(18 * font_scale, 12, 26)
+  local SIZE_TITLE      = clamp(16 * font_scale, 10, 22)
+  local SIZE_SUBTITLE   = clamp(8  * font_scale, 7, 13)
+  local SIZE_HUD        = clamp(9  * font_scale, 7, 14)
+  local SIZE_HUD_DELTA  = clamp(12 * font_scale, 9, 18)
+  local SIZE_GO_TITLE   = clamp(18 * font_scale, 12, 26)
 
   // --- Background ---
   screen.clear()
