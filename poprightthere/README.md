@@ -1,5 +1,12 @@
 ## Pop Right There
 
+<picture>
+  <img
+    src="poprightthere-game.png"
+    height=500
+    width=500/>
+</picture>
+
 Play [here](https://microstudio.dev/i/EJTheBae/poprightthere/)
 
 **Pop Right There** is a fast-paced balloon popping game where you need to tap colorful balloons for points while avoiding the dangerous bombs! Score as many points as possible in 20 seconds as the game gets progressively faster and more challenging.
